@@ -10,24 +10,27 @@ import java.lang.reflect.Method;
 public class ConnectionHandler implements HttpHandler {
     private String route;
 
-    ConnectionHandler(){}
+    ConnectionHandler() {
+    }
 
     ConnectionHandler(String route) {
         this.route = route;
     }
 
-    @WebRoute("/test")
+    @WebRoute(path = "/test", method = "post")
     private void onTest(HttpExchange httpExchange) throws IOException {
         String response = "This is the test page";
-        httpExchange.sendResponseHeaders(200, response.length());
-        OutputStream os = httpExchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
+        httpRender(httpExchange, response);
     }
 
-    @WebRoute("/index")
+    @WebRoute(path = "/index")
     private void onIndex(HttpExchange httpExchange) throws IOException {
         String response = "This is the index page";
+        httpRender(httpExchange, response);
+        return;
+    }
+
+    private void httpRender(HttpExchange httpExchange, String response) throws IOException {
         httpExchange.sendResponseHeaders(200, response.length());
         OutputStream os = httpExchange.getResponseBody();
         os.write(response.getBytes());
@@ -37,13 +40,13 @@ public class ConnectionHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         Class<ConnectionHandler> obj = ConnectionHandler.class;
-        for (Method method: obj.getDeclaredMethods()) {
+        for (Method method : obj.getDeclaredMethods()) {
             if (method.isAnnotationPresent(WebRoute.class)) {
                 Annotation annotation = method.getAnnotation(WebRoute.class);
                 WebRoute webRoute = (WebRoute) annotation;
-                if (webRoute.value().equals(route)) {
+                if (webRoute.path().equals(route)) {
                     try {
-                        method.invoke(obj.newInstance(),httpExchange);
+                        method.invoke(obj.newInstance(), httpExchange);
                     } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
                         e.printStackTrace();
                     }

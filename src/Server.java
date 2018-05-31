@@ -14,7 +14,7 @@ public class Server {
             if (method.isAnnotationPresent(WebRoute.class)) {
                 Annotation annotation = method.getAnnotation(WebRoute.class);
                 WebRoute webRoute = (WebRoute) annotation;
-                server.createContext(webRoute.value(), new ConnectionHandler(webRoute.value()));
+                server.createContext(webRoute.path(), new ConnectionHandler(webRoute.path()));
             }
         }
         server.setExecutor(Executors.newFixedThreadPool(6));

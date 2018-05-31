@@ -9,8 +9,5 @@
         <module name="jpa-example" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="jpa-example" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>
